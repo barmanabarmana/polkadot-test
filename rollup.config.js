@@ -2,10 +2,7 @@ const commonjs = require('@rollup/plugin-commonjs')
 const resolve = require('@rollup/plugin-node-resolve').default
 const typescript = require('@rollup/plugin-typescript')
 const json = require('@rollup/plugin-json')
-const nodePolyfills = require('rollup-plugin-polyfill-node');
-const pluginInject = require("@rollup/plugin-inject")
-const path = require("path")
-
+import builtins from 'rollup-plugin-node-builtins';
 
 const production = !process.env.ROLLUP_WATCH
 
@@ -41,6 +38,7 @@ module.exports = {
     },
 
     plugins: [
+        builtins(),
         json(),
         // If you have external dependencies installed from
         // npm, you'll most likely need these plugins. In
@@ -53,20 +51,18 @@ module.exports = {
         //     browser    : true,
         // }),
         //nodePolyfills(),
-        commonjs({extensions: ['.ts', '.js', '.mjs', '.cjs']}),
+        commonjs(),
 
-        pluginInject({
-            buffer: path.resolve(process.cwd(), 'node_modules/@polkadot/x-bundle/buffer.js'),
-            Buffer: path.resolve(process.cwd(), 'node_modules/@polkadot/x-bundle/buffer.js'),
-            crypto: path.resolve(process.cwd(), 'node_modules/@polkadot/x-bundle/crypto.js'),
-            inherits: path.resolve(process.cwd(), 'node_modules/@polkadot/x-bundle/inherits.js')
-        }),
+        // pluginInject({
+        //     //buffer: path.resolve(process.cwd(), 'node_modules/@polkadot/x-bundle/buffer.js'),
+        //     //Buffer: path.resolve(process.cwd(), 'node_modules/@polkadot/x-bundle/buffer.js'),
+        //     // crypto: path.resolve(process.cwd(), 'node_modules/@polkadot/x-bundle/crypto.js'),
+        //     // inherits: path.resolve(process.cwd(), 'node_modules/@polkadot/x-bundle/inherits.js')
+        // }),
+
         resolve({
             browser   : true,
-            extensions: ['.ts', '.js', '.mjs', '.cjs'],
-            buffer: false,
-            process: false
-
+            //extensions: ['.ts', '.js', '.mjs', '.cjs'],
         }),
         typescript({
             sourceMap    : !production,
