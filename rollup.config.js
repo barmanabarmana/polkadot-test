@@ -2,7 +2,9 @@ const commonjs = require('@rollup/plugin-commonjs')
 const resolve = require('@rollup/plugin-node-resolve').default
 const typescript = require('@rollup/plugin-typescript')
 const json = require('@rollup/plugin-json')
-
+const nodePolyfills = require('rollup-plugin-polyfill-node');
+const pluginInject = require("@rollup/plugin-inject")
+const path = require("path")
 
 
 const production = !process.env.ROLLUP_WATCH
@@ -37,6 +39,7 @@ module.exports = {
         name     : 'app',
         file     : 'bundle.js',
     },
+
     plugins: [
         json(),
         // If you have external dependencies installed from
@@ -44,17 +47,27 @@ module.exports = {
         // some cases you'll need additional configuration -
         // consult the documentation for details:
         // https://github.com/rollup/plugins/tree/master/packages/commonjs
-        resolve({
-            resolveOnly: [/.*/],
-            extensions : ['.ts', '.js', '.mjs', '.cjs'],
-            browser    : true,
-        }),
         // resolve({
-        //     browser   : true,
-        //     extensions: ['.ts', '.js', '.mjs', '.cjs'],
-        //
+        //     resolveOnly: [/.*/],
+        //     extensions : ['.ts', '.js', '.mjs', '.cjs'],
+        //     browser    : true,
         // }),
+        //nodePolyfills(),
         commonjs({extensions: ['.ts', '.js', '.mjs', '.cjs']}),
+
+        pluginInject({
+            buffer: path.resolve(process.cwd(), 'node_modules/@polkadot/x-bundle/buffer.js'),
+            Buffer: path.resolve(process.cwd(), 'node_modules/@polkadot/x-bundle/buffer.js'),
+            crypto: path.resolve(process.cwd(), 'node_modules/@polkadot/x-bundle/crypto.js'),
+            inherits: path.resolve(process.cwd(), 'node_modules/@polkadot/x-bundle/inherits.js')
+        }),
+        resolve({
+            browser   : true,
+            extensions: ['.ts', '.js', '.mjs', '.cjs'],
+            buffer: false,
+            process: false
+
+        }),
         typescript({
             sourceMap    : !production,
             inlineSources: !production,

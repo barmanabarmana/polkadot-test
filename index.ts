@@ -1,5 +1,5 @@
 // Import the API
-const { ApiPromise } = require('@polkadot/api');
+import { ApiPromise } from '@polkadot/api';
 
 // Known account we want to use (available on dev chain, with funds)
 const Alice = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
